@@ -1,5 +1,7 @@
+require 'byebug'
+
 class Link
-  attr_accessor :key, :val, :next
+  attr_accessor :key, :val, :next, :prev
 
   def initialize(key = nil, val = nil, prev = nil, nxt = nil)
     @key, @val, @prev, @next = key, val, prev, nxt
@@ -39,6 +41,7 @@ class LinkedList
   end
 
   def empty?
+    byebug
     @head.key.nil?
   end
 
@@ -49,7 +52,7 @@ class LinkedList
       link = link.next
     end
 
-    nil
+    link
   end
 
   def include?(key)
@@ -65,8 +68,11 @@ class LinkedList
   def insert(key, val)
     if empty?
       @head = Link.new(key, val)
+      @tail = head
     else
-      last.next = Link.new(key, val, last)
+      new_last = Link.new(key, val, @tail)
+      @tail.next = new_last
+      @tail = new_last
     end
   end
 
@@ -78,14 +84,21 @@ class LinkedList
       next_link = link.next
     end
     if link = @head
-      @head = Link.new
+      if link.next.nil?
+        @head = Link.new
+      else
+        link.next.prev = nil
+        @head.next = nil
+        @head = link.next
+      end
     elsif link.next.nil?
+      @tail = prev_link
       prev_link.next = nil
     else
       prev_link.next, next_link.prev = next_link, prev_link
     end
 
-    end
+  end
 
   def each
     yield @head if @head.next.nil?
