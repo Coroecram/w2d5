@@ -88,7 +88,7 @@ class LinkedList
   def each
     yield @head if @head.next.nil?
     link = @head
-    until link.next.nil?
+    until link.nil?
       yield link
       link = link.next
     end

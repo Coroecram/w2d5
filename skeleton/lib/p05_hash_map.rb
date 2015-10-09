@@ -2,6 +2,7 @@ require_relative 'p02_hashing'
 require_relative 'p04_linked_list'
 
 class HashMap
+  include Enumerable
   attr_reader :count
 
   def initialize(num_buckets = 8)
@@ -10,15 +11,22 @@ class HashMap
   end
 
   def include?(key)
+    @store[key.hash % num_buckets].include?(key)
   end
 
   def set(key, val)
+    resize! if count == num_buckets
+    @store[key.hash % num_buckets].insert(key, val)
+    @count += 1
   end
 
   def get(key)
+    @store[key.hash % num_buckets].get(key)
   end
 
   def delete(key)
+    @store[key.hash % num_buckets].remove(key)
+    @count -= 1
   end
 
   def each
@@ -42,6 +50,13 @@ class HashMap
   end
 
   def resize!
+    store_copy = @store.dup
+    @store = Array.new(num_buckets*2) { LinkedList.new }
+    store_copy.each do |list|
+      list.each do |el|
+        @store[el.key.hash % num_buckets].insert(el.key, el.val)
+      end
+    end
   end
 
   def bucket(key)
