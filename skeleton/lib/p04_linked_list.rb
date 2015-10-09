@@ -11,6 +11,7 @@ class Link
 end
 
 class LinkedList
+  include Enumerable
   attr_reader :head
 
   def initialize
@@ -43,7 +44,7 @@ class LinkedList
   def get(key)
     link = @head
     until link.nil?
-      return link.value if link.key == key
+      return link.val if link.key == key
       link = link.next
     end
 
@@ -69,13 +70,33 @@ class LinkedList
   end
 
   def remove(key)
-  end
+    link = @head
+    until link.key == key || link.next.nil?
+      last_link = link
+      link = link.next
+    end
+    if link = @head
+      @head = Link.new
+    elsif link.next.nil?
+      last_link.next = nil
+    else
+      last_link.next = link.next
+    end
+
+    end
 
   def each
+    yield @head if @head.next.nil?
+    link = @head
+    until link.next.nil?
+      yield link
+      link = link.next
+    end
+
   end
 
   # uncomment when you have `each` working and `Enumerable` included
-  # def to_s
-  #   inject([]) { |acc, link| acc << "[#{link.key}, #{link.val}]" }.join(", ")
-  # end
+  def to_s
+    inject([]) { |acc, link| acc << "[#{link.key}, #{link.val}]" }.join(", ")
+  end
 end

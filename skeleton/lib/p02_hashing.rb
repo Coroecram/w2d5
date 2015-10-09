@@ -4,14 +4,9 @@ end
 
 class Array
   def hash
-    return 42 if empty?
-    each_with_index.map do |el, i|
-      if el.nil?
-        69 + i
-      else
-        el.hash^(length+i)
-      end
-    end.join("").to_i
+    sum = 0
+    each_with_index { |el, i| sum = sum ^ (el.hash + i.hash) }
+    sum
   end
 
 end
@@ -19,7 +14,7 @@ end
 class String
 
   def hash
-    Integer(chars.map { |char| char.ord}.join)
+    split.inject(0) { |accum, char| accum ^ (char.ord + length) }
   end
 
 end
