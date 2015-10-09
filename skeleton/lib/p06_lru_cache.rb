@@ -15,6 +15,8 @@ class LRUCache
   end
 
   def get(key)
+    @map.get(key)
+
   end
 
   def to_s
